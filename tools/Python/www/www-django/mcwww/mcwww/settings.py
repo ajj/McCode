@@ -5,8 +5,10 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
 # McUser CONFIG #
 #===============#
 LOGIN_URL                       = '/login'
-AUTHENTICATION_BACKENDS         = ('mcUser.models.mcBackend',)
-AUTH_USER_MODEL                 = ('mcUser.mcUser')
+# AUTHENTICATION_BACKENDS         = ('mcUser.models.mcBackend',)
+# AUTH_USER_MODEL                 = ('mcUser.mcUser')
+# AUTHENTICATION_BACKENDS         = ('auth.RemoteUserBackend',)
+AUTH_USER_MODEL                 = ('auth.User')
 SESSION_COOKIE_AGE              = 10*60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST      = True
@@ -33,6 +35,7 @@ DATA_FILES      = ('sim/datafiles',) # performs: ln <simulation folder>/datafile
 #===============#
 # Django Config #
 #===============#
+# DJANGO_SETTINGS_MODULE = 'mcwww/settings.py'
 SECRET_KEY     = 'gaeh@565h%=7)gw#625*ag82am#*55xnb40xa769yaxq-^ukj*'                    # THIS SHOULD BE SECRET! REGENERATE IT A LOT BECAUSE OF THE SERIALIZER USED. ----^
 DEBUG          =  True # False                                                           <----  THIS NEEDS TO BE SET TO FALSE. (css broken if false!!!!)
 TEMPLATE_DEBUG = DEBUG
@@ -41,7 +44,8 @@ INSTALLED_APPS = (
     # ------ #
     'mcsimulator',
     'mcwww',
-    'mcUser',
+    #    'mcUser',
+
     # django Apps #
     # ----------- #
     # Admin Site

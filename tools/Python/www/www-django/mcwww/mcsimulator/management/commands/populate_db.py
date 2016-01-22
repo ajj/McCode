@@ -1,6 +1,4 @@
 #================================#
-# Being Modified to account for  #
-# the parameter reimplementation #
 # Editor: Mark Lewis             #
 #================================#
 # python imports
@@ -10,7 +8,8 @@ from glob import glob
 import json
 import re
 # django imports
-from django.core.management.base import NoArgsCommand, make_option
+from django.core.management.base import NoArgsCommand
+from optparse import make_option
 from django.contrib.auth.models import User,Group
 # app imports
 from mcsimulator.models import Simulation
@@ -51,12 +50,11 @@ def main():
 #          <kwd> are read from instr file.             #
 # nb. match objects are pretty nice.                   #
 #------------------------------------------------------#
-def read_params(instr_file):                             
+def read_params(instr_file):                
     simf = file(instr_file)
     # Skip lines up to parameters
     for line in simf:
-        if line.lstrip('*').strip().lower().startswith('%parameters'):
-            break
+        if line.lstrip('*').strip().lower().startswith('%parameters'): break
     # Read parameters
     params = {}
     priority = 0
@@ -130,16 +128,18 @@ def info(bin):
     sim_name = basename(bin)[:-1*len('.out')]
     sim_group = basename(dirname(bin))
     Group.objects.get_or_create(name=sim_group)
-    full_sim_name = sim_group+'/'+sim_name
+    sim_id = sim_group+'_'+sim_name
     sim = None
-    if exist(Simulation, name=sim_name, simgroup=sim_group, displayname=sim_name):
+
+    if exist(Simulation, name=sim_id, simgroup=sim_group, displayname=sim_name):
         print 'Updating existing simulation: ' + sim_name
-        sim = fetch(Simulation, name=sim_name)[0]
+        sim = fetch(Simulation, name=sim_id)[0]
     else:
-        sim = Simulation(name=sim_group+"_"+sim_name, simgroup=sim_group, displayname=sim_name,
+        print "Inserting new simulation: %s"%sim_name
+        sim = Simulation(name=sim_id, simgroup=sim_group, displayname=sim_name,
                          params=build_params(bin))
         sim.save()
-    print sim.id, sim_name
+    print "db_id: %s\n sim_id: %s\n simulalation: %s "%(sim.id, sim_id, sim_name)
 #======================#
 # Command line binding #
 #======================#

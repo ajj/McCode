@@ -62,7 +62,7 @@ macro(installMCCODE)
 	AppendDef(MCCODE_TARNAME="${MCCODE_TARNAME}")
 	AppendDef(MCCODE_VERSION="${MCCODE_VERSION}")
 	AppendDef(MCCODE_STRING="${MCCODE_STRING}")
-	AppendDef(MCCODE_BUGREPORT="www.mcstas.org")
+        AppendDef(MCCODE_BUGREPORT="www.${MCCODE_TARNAME}.org")
 	AppendDef(MCCODE_URL="")
 
 	# -DCC_HAS_PROTOS=1
@@ -317,7 +317,7 @@ macro(installMCCODE)
 	      @ONLY)
       install(PROGRAMS ${WORK}/support/${name} DESTINATION ${FLAVOR}/${MCCODE_VERSION}/)
     endforeach()
-    
+    install(PROGRAMS ${WORK}/support/postinst DESTINATION ${FLAVOR}/${MCCODE_VERSION}/bin/)
   endif()
 
   if(WINDOWS)
@@ -331,7 +331,7 @@ macro(installMCCODE)
     endforeach()
 
     # Python related batches special handling
-    foreach (name run-py.bat gui-py.bat plot-chaco-py.bat plot-matplotlib-py.bat plot-matlab.bat display-x3d-py.bat display-matplotlib-py.bat display-R-py.bat display-vtk-py.bat)
+    foreach (name run-py.bat gui-py.bat plot-gnuplot-py.bat plot-chaco-py.bat plot-matplotlib-py.bat plot-matlab.bat display-x3d-py.bat display-matplotlib-py.bat display-R-py.bat display-vtk-py.bat)
       configure_file(
 	      cmake/support/run-scripts/${name}.in
 	      work/support/${MCCODE_PREFIX}${name}

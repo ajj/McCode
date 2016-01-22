@@ -1,54 +1,34 @@
- #!/bin/sh
+#!/bin/sh
 export PYTHONPATH=$PYTHONPATH:./
-#------------------------------------------#
-# Get host name for populating .ldif files #
-#------------------------------------------#
-DN=`sudo slapcat | grep "dn: cn=admin" |cut -f2- -d,`
-echo Obtained LDAP database DN: $DN
-echo " "
-#---------------#
-# Get passwords #
-#---------------#
-count=0
-warn="."
-RPW1="."
-until [[ $RPW1 == $RPW2 ]]; do
-    echo "Please input your LDAP root password"$warn
-    read -s RPW1
-    echo "Please repeat the password"$warn
-    read -s RPW2
-    warn=", ensure passwords match."
-    echo " "
-done
-ROOTPW=`/usr/sbin/slappasswd -s $RPW1`
-warn="."
-BPW1="."
-until [[ $BPW1 == $BPW2 ]]; do
-    echo "Please input your moodle bind password"$warn
-    read -s BPW1
-    echo "Please repeat the password"$warn
-    read -s BPW2
-    warn=", ensure passwords match."
-    echo " "
-done
-BINDPW=`/usr/sbin/slappasswd -s $BPW1`
-warn="."
-until [[ ${LDAPOP:0:1} == "d" ]]; do
-    echo "Please input your LDAP DB admin password"$warn
-    warn=" (the one you set on slapd install)."
-    read -s TREEPW
-    echo " "
-    echo Testing LDAP accesses.
-    LDAPOP=`ldapwhoami -D cn=admin,$DN -w $TREEPW`
-done
-echo Access by admin accepted.
-echo " "
 
-#---------------------#
-# Calling DB builders #
-#---------------------#
-python ./bin/build-templates.py $DN $ROOTPW $BINDPW
-python ./bin/ldap-build.py $DN $ROOTPW $BINDPW $TREEPW $RPW1
+# PUT A .gitignore IN sim FOLDER.
+# CHECK FOR SECURITY UPDATES IN DJANGO 1.7
+# CHANGE ERROR MESSAGES
+# BETTER PASSWORD PROMPTS - lable each pwd something simple 'level 1, 2, 3'
+# READ ME FOR EACH .LDIF TEMPLATE
+# TRY TO PUT THE SAME USERNAME PROMPT FOR LDAP AND SQLITE
+
+# NB: $i = ith argument, $# = tot num args
+
+#----------------------#
+# Getting dependencies #
+#----------------------#
+sudo ./bin/get-dependencies.sh
+sudo apt-get install python-dev python-pip sqlite3 # these can be moved to where get dependencies looks
+sudo pip install django==1.7 jsonfield simplejson
+
+#--------------------------------------#
+# Refreshing DBs if they are installed #
+#--------------------------------------#
+if [ -f DB/mcwww.sqlite3 ] ; then
+    rm DB/mcwww.sqlite3
+fi
+
+#-------------------------------#
+# Running the simulation builds #
+# Poulating the sqlite DB       #
+#-------------------------------#
 python manage.py syncdb
-
-
+./bin/update-simulations.sh
+# this is just for debug
+./manage.py createuser mark 1

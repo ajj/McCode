@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 from django.conf.urls import patterns, include
-from mcUser.admin import admin_site
+# from mcUser.admin import admin_site
 admin.autodiscover()
 
 RUNREF_RE='[\w\.:-]+'
@@ -40,7 +40,9 @@ urlpatterns = patterns(
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the std django admin:
-    # url(r'^admin/', include(admin.site.urls)),
-    url(r'^admin/', include(admin_site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
+
+    # this line referes to the new admin site for login purposes.
+    #    url(r'^admin/', include(admin_site.urls)),
     
 )
